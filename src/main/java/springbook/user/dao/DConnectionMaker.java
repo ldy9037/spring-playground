@@ -4,12 +4,13 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class SimpleConnectionMaker {
+public class DConnectionMaker implements ConnectionMaker {
     private static final String URL = "";
     private static final String USER = "";
     private static final String PASSWORD = "";
-    
-    public Connection getConnection() throws ClassNotFoundException, SQLException {
+
+    @Override
+    public Connection makeConnection() throws ClassNotFoundException, SQLException {
         Class.forName("com.mysql.jdbc.Driver");
         Connection c = DriverManager.getConnection(URL, USER, PASSWORD);
 
