@@ -1,31 +1,23 @@
 plugins {
-    id 'java'
+	id 'org.springframework.boot' version '2.7.5'
+	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+	id 'java'
 }
 
-group 'com.emadam.springbook'
-version '1.0.0'
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+group = 'com.emadam'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '8'
 
 repositories {
-    mavenCentral()
+	mavenCentral()
 }
 
 dependencies {
-    implementation 'mysql:mysql-connector-java:8.0.27'
-    implementation 'org.springframework.boot:spring-boot-starter:2.7.5'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+	runtimeOnly 'com.mysql:mysql-connector-j'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
-test {
-    useJUnitPlatform()
-    testLogging {
-        afterSuite { desc, result ->
-            if (!desc.parent) {
-                def output = "Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} passed, ${result.failedTestCount} failed, ${result.skippedTestCount} skipped)"
-                def startItem = '|  ', endItem = '  |'
-                def repeatLength = startItem.length() + output.length() + endItem.length()
-                println('\n' + ('-' * repeatLength) + '\n' + startItem + output + endItem + '\n' + ('-' * repeatLength))
-            }
-        }
-    }
+tasks.named('test') {
+	useJUnitPlatform()
 }
