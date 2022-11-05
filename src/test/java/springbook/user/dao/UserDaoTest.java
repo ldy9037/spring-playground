@@ -3,6 +3,8 @@ package springbook.user.dao;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
@@ -20,17 +22,23 @@ public class UserDaoTest {
         dao.deleteAll();
         assertThat(dao.getCount()).isZero();
 
-        User user = new User("ldy", "이동열", "test123");
+        List<User> users = new ArrayList<>();
+        for (int i = 0; i < 2; i++) {
+            User user = new User("ldy" + i, "이동열", "test123");
 
-        dao.add(user);
+            dao.add(user);
+            users.add(user);
+        }
 
-        assertThat(dao.getCount()).isEqualTo(1);
+        assertThat(dao.getCount()).isEqualTo(users.size());
 
-        User user2 = dao.get(user.getId());
+        for (User expected : users) {
+            User user = dao.get(expected.getId());
 
-        assertThat(user2.getId()).isEqualTo(user.getId());
-        assertThat(user2.getName()).isEqualTo(user.getName());
-        assertThat(user2.getPassword()).isEqualTo(user.getPassword());
+            assertThat(user.getId()).isEqualTo(expected.getId());
+            assertThat(user.getName()).isEqualTo(expected.getName());
+            assertThat(user.getPassword()).isEqualTo(expected.getPassword());   
+        }
     }
 
     @Test
