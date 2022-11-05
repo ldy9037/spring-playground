@@ -17,15 +17,22 @@ public class UserDaoConnectionCountingTest {
         ApplicationContext context = new GenericXmlApplicationContext("applicationContext.xml");
         UserDao dao = context.getBean("userDao", UserDao.class);
 
-        int expected = 5;
+        int expected = 0;
+
+        dao.deleteAll();
+        expected++;
+
+        assertThat(dao.getCount()).isZero();
+        expected++;
         
-        for (int i = 0; i < expected; i++) {
+        for (int i = 0; i < 5; i++) {
             User user = new User();
             user.setId("ldy" + i);
             user.setName("이동열");
             user.setPassword("test123");    
             
             dao.add(user);
+            expected++;
         } 
 
         CountingDataSource countingDataSource = context.getBean("dataSource", CountingDataSource.class);
