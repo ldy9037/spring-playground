@@ -26,10 +26,7 @@ public class UserDaoConnectionCountingTest {
         expected++;
         
         for (int i = 0; i < 5; i++) {
-            User user = new User();
-            user.setId("ldy" + i);
-            user.setName("이동열");
-            user.setPassword("test123");    
+            User user = new User("ldy" + i, "이동열", "test123");
             
             dao.add(user);
             expected++;
