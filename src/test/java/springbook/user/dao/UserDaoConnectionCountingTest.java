@@ -1,14 +1,19 @@
 package springbook.user.dao;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.sql.SQLException;
 
+import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
 
 import springbook.user.domain.User;
 
 public class UserDaoConnectionCountingTest {
-    public static void main(String[] args) throws SQLException {
+    
+    @Test
+    public void counting() throws SQLException {
         ApplicationContext context = new GenericXmlApplicationContext("applicationContext.xml");
         UserDao dao = context.getBean("userDao", UserDao.class);
 
@@ -21,12 +26,10 @@ public class UserDaoConnectionCountingTest {
             user.setPassword("test123");    
             
             dao.add(user);
-
-            System.out.println(user.getId() + " 등록 성공");
         } 
 
         CountingDataSource countingDataSource = context.getBean("dataSource", CountingDataSource.class);
 
-        System.out.println("연결 횟수" + countingDataSource.getCounter());
+        assertThat(countingDataSource.getCounter()).isEqualTo(expected);
     }    
 }

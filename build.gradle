@@ -6,7 +6,6 @@ plugins {
 
 group = 'com.emadam'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '8'
 
 repositories {
 	mavenCentral()
@@ -15,7 +14,13 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
 	runtimeOnly 'com.mysql:mysql-connector-j'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	implementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(8)
+    }
 }
 
 tasks.named('test') {
