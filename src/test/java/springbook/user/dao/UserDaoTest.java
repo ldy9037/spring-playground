@@ -1,6 +1,7 @@
 package springbook.user.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -9,6 +10,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
+import org.springframework.dao.EmptyResultDataAccessException;
 
 import springbook.user.domain.User;
 
@@ -39,6 +41,18 @@ public class UserDaoTest {
             assertThat(user.getName()).isEqualTo(expected.getName());
             assertThat(user.getPassword()).isEqualTo(expected.getPassword());   
         }
+    }
+
+    @Test
+    public void getUserFailure() throws Exception {
+        ApplicationContext context = new GenericXmlApplicationContext("applicationContext.xml");
+        UserDao dao = context.getBean("userDao", UserDao.class);
+
+        dao.deleteAll();
+        assertThat(dao.getCount()).isZero();
+        
+        assertThatExceptionOfType(EmptyResultDataAccessException.class)
+                .isThrownBy(() -> dao.get("unknown_id"));
     }
 
     @Test
