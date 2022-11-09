@@ -68,7 +68,9 @@ public class UserDao {
 
         try {
             c = dataSource.getConnection();
-            ps = c.prepareStatement("delete from users");    
+            
+            StatementStrategy statementStrategy = new DeleteAllStatement();
+            ps = statementStrategy.makeStatement(c);
 
             ps.executeUpdate();
         } catch (SQLException e) {
