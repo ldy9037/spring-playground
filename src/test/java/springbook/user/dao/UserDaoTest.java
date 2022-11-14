@@ -80,6 +80,9 @@ public class UserDaoTest {
         dao.deleteAll();
         assertThat(dao.getCount()).isZero();
 
+        List<User> users0 = dao.getAll();
+        assertThat(users0.size()).isZero();
+
         User user1 = new User("gyumee", "name1", "1234");
         dao.add(user1);
         List<User> users1 = dao.getAll();
