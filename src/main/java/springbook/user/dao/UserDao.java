@@ -15,6 +15,17 @@ import springbook.user.domain.User;
 public class UserDao {
 
     private JdbcTemplate jdbcTemplate;
+    private RowMapper<User> userMapper = new RowMapper<User>() {
+        @Override
+        @Nullable
+        public User mapRow(ResultSet rs, int rowNum) throws SQLException {
+            User user = new User(); 
+            user.setId(rs.getString( "id")); 
+            user.setName(rs.getString( "name")); 
+            user.setPassword(rs.getString("password"));
+            return user;
+        }
+    };
 
     public void setDataSource(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
@@ -27,17 +38,8 @@ public class UserDao {
 
     public User get(String id) throws SQLException {
         return jdbcTemplate.queryForObject("select * from users where id = ?",
-                new RowMapper<User>() {
-                    @Override
-                    @Nullable
-                    public User mapRow(ResultSet rs, int rowNum) throws SQLException {
-                        User user = new User(); 
-                        user.setId(rs.getString( "id")); 
-                        user.setName(rs.getString( "name")); 
-                        user.setPassword(rs.getString("password"));
-                        return user;
-                    }                  
-                }, new Object[] {id});
+        userMapper, 
+                new Object[] {id});
     }
 
     public void deleteAll() throws SQLException {
@@ -49,17 +51,6 @@ public class UserDao {
     }
 
     public List<User> getAll() throws SQLException {
-        return jdbcTemplate.query("select * from users order by id", 
-                new RowMapper<User>() {
-                    @Override
-                    @Nullable
-                    public User mapRow(ResultSet rs, int rowNum) throws SQLException {
-                        User user = new User(); 
-                        user.setId(rs.getString( "id")); 
-                        user.setName(rs.getString( "name")); 
-                        user.setPassword(rs.getString("password"));
-                        return user;
-                    }
-                });
+        return jdbcTemplate.query("select * from users order by id", userMapper);
     }
 }
