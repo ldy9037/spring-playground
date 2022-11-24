@@ -24,9 +24,14 @@ public class UserDaoTest {
     @Autowired
     private UserDao dao;
 
+    List<User> users;
+
     @BeforeEach
     void setUp() {
-
+        users = new ArrayList<>();
+        users.add(new User("gyumee", "name1", "1234"));
+        users.add(new User("leegw700", "name2", "1234"));
+        users.add(new User("bumjin", "name3", "1234"));
     }
 
     @Test    
@@ -34,12 +39,8 @@ public class UserDaoTest {
         dao.deleteAll();
         assertThat(dao.getCount()).isZero();
 
-        List<User> users = new ArrayList<>();
-        for (int i = 0; i < 2; i++) {
-            User user = new User("ldy" + i, "이동열", "test123");
-
+        for (User user : users) {
             dao.add(user);
-            users.add(user);
         }
 
         assertThat(dao.getCount()).isEqualTo(users.size());
@@ -67,10 +68,8 @@ public class UserDaoTest {
         dao.deleteAll();
         assertThat(dao.getCount()).isZero();
 
-        int expected = 5;
-
-        for (int i = 1; i <= expected; i++) {
-            dao.add(new User("ldy" + i, "이동열", "Test123"));
+        for (int i = 1; i < users.size(); i++) {
+            dao.add(users.get(i));
             assertThat(dao.getCount()).isEqualTo(i);
         }
     }
@@ -83,23 +82,20 @@ public class UserDaoTest {
         List<User> users0 = dao.getAll();
         assertThat(users0.size()).isZero();
 
-        User user1 = new User("gyumee", "name1", "1234");
-        dao.add(user1);
+        dao.add(users.get(0));
         List<User> users1 = dao.getAll();
-        checkSameUser(user1, users1.get(0));
+        checkSameUser(users.get(0), users1.get(0));
 
-        User user2 = new User("leegw700", "name2", "1234");
-        dao.add(user2);
+        dao.add(users.get(1));
         List<User> users2 = dao.getAll();
-        checkSameUser(user1, users2.get(0));
-        checkSameUser(user2, users2.get(1));
+        checkSameUser(users.get(0), users2.get(0));
+        checkSameUser(users.get(1), users2.get(1));
 
-        User user3 = new User("bumjin", "name3", "1234");
-        dao.add(user3);
+        dao.add(users.get(2));
         List<User> users3 = dao.getAll();
-        checkSameUser(user3, users3.get(0));
-        checkSameUser(user1, users3.get(1));
-        checkSameUser(user2, users3.get(2));
+        checkSameUser(users.get(2), users3.get(0));
+        checkSameUser(users.get(0), users3.get(1));
+        checkSameUser(users.get(1), users3.get(2));
     }
 
     private void checkSameUser(User user1, User user2) {
