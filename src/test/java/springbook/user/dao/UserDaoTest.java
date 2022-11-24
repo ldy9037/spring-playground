@@ -16,6 +16,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import springbook.user.domain.Level;
 import springbook.user.domain.User;
 
 @ExtendWith(SpringExtension.class)
@@ -30,9 +31,9 @@ public class UserDaoTest {
     @BeforeEach
     void setUp() {
         users = new ArrayList<>();
-        users.add(new User("gyumee", "name1", "1234"));
-        users.add(new User("leegw700", "name2", "1234"));
-        users.add(new User("bumjin", "name3", "1234"));
+        users.add(new User("gyumee", "name1", "1234", Level.BASIC, 1, 0));
+        users.add(new User("leegw700", "name2", "1234", Level.SILVER, 55, 10));
+        users.add(new User("bumjin", "name3", "1234", Level.GOLD, 100, 40));
     }
 
     @Test    
@@ -49,9 +50,7 @@ public class UserDaoTest {
         for (User expected : users) {
             User user = dao.get(expected.getId());
 
-            assertThat(user.getId()).isEqualTo(expected.getId());
-            assertThat(user.getName()).isEqualTo(expected.getName());
-            assertThat(user.getPassword()).isEqualTo(expected.getPassword());   
+            checkSameUser(user, expected);
         }
     }
 
@@ -103,6 +102,9 @@ public class UserDaoTest {
         assertThat(user1.getId()).isEqualTo(user2.getId());
         assertThat(user1.getName()).isEqualTo(user2.getName());
         assertThat(user1.getPassword()).isEqualTo(user2.getPassword());
+        assertThat(user1.getLevel()).isEqualTo(user2.getLevel());
+        assertThat(user1.getLogin()).isEqualTo(user2.getLogin());
+        assertThat(user1.getRecommend()).isEqualTo(user2.getRecommend());
     }
 
     @Test
