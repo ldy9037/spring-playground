@@ -117,4 +117,22 @@ public class UserDaoTest {
         assertThatExceptionOfType(DuplicateKeyException.class)
                 .isThrownBy(() -> dao.add(users.get(0)));
     }
+
+    @Test
+    public void update() {
+        dao.deleteAll();
+        assertThat(dao.getCount()).isZero();
+
+        dao.add(users.get(0));
+        
+        users.get(0).setName("오민규");
+        users.get(0).setPassword("springno6");
+        users.get(0).setLevel(Level.GOLD);
+        users.get(0).setLogin(1000);
+        users.get(0).setRecommend(999);
+        dao.update(users.get(0));
+        
+        User user1update = dao.get(users.get(0).getId());
+        checkSameUser(users.get(0), user1update);
+    }
 }
