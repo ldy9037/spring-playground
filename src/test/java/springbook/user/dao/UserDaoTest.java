@@ -124,6 +124,7 @@ public class UserDaoTest {
         assertThat(dao.getCount()).isZero();
 
         dao.add(users.get(0));
+        dao.add(users.get(1));
         
         users.get(0).setName("오민규");
         users.get(0).setPassword("springno6");
@@ -134,5 +135,7 @@ public class UserDaoTest {
         
         User user1update = dao.get(users.get(0).getId());
         checkSameUser(users.get(0), user1update);
+        User user2same = dao.get(users.get(1).getId());
+        checkSameUser(user2same, users.get(1));
     }
 }
