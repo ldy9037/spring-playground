@@ -1,6 +1,7 @@
 package springbook.user.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +28,23 @@ public class UserServiceTest {
     UserDao userDao;
 
     List<User> users;
+
+    static class TestUserLevelUpgradePolicyImpl extends UserLevelUpgradePolicyImpl {
+        private String id;
+        
+        private TestUserLevelUpgradePolicyImpl(String id) {
+            this.id = id;
+        }
+
+        @Override
+        public void upgradeLevel(User user) {
+            if (user.getId().equals(this.id)) throw new TestUserUpgradeException();
+            super.upgradeLevel(user);
+        }
+    }
+
+    static class TestUserUpgradeException extends RuntimeException {
+    }
 
     @BeforeEach
     void setUp() {
@@ -70,6 +88,27 @@ public class UserServiceTest {
 
         checkLevel(userWithLevelRead, userWithLevel.getLevel());
         checkLevel(userWithoutLevelRead, Level.BASIC);
+    }
+
+    @Test
+    public void upgradeAllOrNothing() {
+        UserLevelUpgradePolicyImpl testUserLevelUpgradePolicyTest = new TestUserLevelUpgradePolicyImpl(users.get(3).getId());
+        testUserLevelUpgradePolicyTest.setUserDao(userDao);
+        
+        UserService testUserService = new UserService();
+        testUserService.setUserDao(userDao);
+        testUserService.setUserLevelUpgradePolicy(testUserLevelUpgradePolicyTest);
+
+        userDao.deleteAll();
+        for (User user : users) userDao.add(user);
+
+        try {
+            testUserService.upgradeLevels();
+            fail("TestUserUpgradeException expected");
+        } catch (TestUserUpgradeException e) {
+        }
+
+        checkLevelUpgraded(users.get(1), false);
     }
 
     private void checkLevel(User user, Level expectedLevel) {
