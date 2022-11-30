@@ -6,6 +6,8 @@ import static org.assertj.core.api.Assertions.fail;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.sql.DataSource;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,6 +22,9 @@ import springbook.user.domain.User;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = "/applicationContext.xml")
 public class UserServiceTest {
+
+    @Autowired
+    DataSource dataSource;
 
     @Autowired
     UserService userService;
@@ -57,7 +62,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void upgradeLevels() {
+    public void upgradeLevels() throws Exception {
         userDao.deleteAll();
         for (User user : users) {
             userDao.add(user);
@@ -91,11 +96,12 @@ public class UserServiceTest {
     }
 
     @Test
-    public void upgradeAllOrNothing() {
+    public void upgradeAllOrNothing() throws Exception {
         UserLevelUpgradePolicyImpl testUserLevelUpgradePolicyTest = new TestUserLevelUpgradePolicyImpl(users.get(3).getId());
         testUserLevelUpgradePolicyTest.setUserDao(userDao);
         
         UserService testUserService = new UserService();
+        testUserService.setDataSource(dataSource);
         testUserService.setUserDao(userDao);
         testUserService.setUserLevelUpgradePolicy(testUserLevelUpgradePolicyTest);
 
